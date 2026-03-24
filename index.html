@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Dashboard - Quick Response Management</title>
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Vue 3 and Chart.js from CDN -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body id="app">
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <span>QR Management</span>
+    </div>
+    <div class="sidebar-nav">
+      <a href="index.html" class="nav-item active">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        <span>Dashboard</span>
+      </a>
+      <a href="list.html" class="nav-item">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        <span>QR List</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="content-header">
+      <h1 class="content-title">Dashboard 仪表盘</h1>
+      <div class="header-actions">
+        <span style="color: var(--text-secondary); font-size: 0.875rem;">Data Update: {{ updateTime }}</span>
+      </div>
+    </div>
+
+    <!-- KPI Cards Grid -->
+    <div class="kpi-grid">
+      <div class="card">
+        <div class="card-title">Total QR Cases</div>
+        <div class="card-value">{{ kpis.total }}</div>
+        <div class="card-subtitle">All cases loaded</div>
+      </div>
+      <div class="card">
+         <div class="card-title" style="color: var(--success-color);">Completed</div>
+         <div class="card-value">{{ kpis.completed }}</div>
+         <div class="card-subtitle">{{ kpis.completedRate }}% of total</div>
+      </div>
+      <div class="card">
+         <div class="card-title" style="color: #856404;">Ongoing</div>
+         <div class="card-value">{{ kpis.ongoing || 0 }}</div>
+         <div class="card-subtitle">{{ kpis.ongoingRate || 0 }}% of total</div>
+      </div>
+      <div class="card">
+         <div class="card-title" style="color: var(--danger-color);">Failed</div>
+         <div class="card-value">{{ kpis.failed }}</div>
+         <div class="card-subtitle">{{ kpis.failedRate }}% of total</div>
+      </div>
+      <div class="card">
+         <div class="card-title">Avg Duration</div>
+         <div class="card-value">{{ kpis.avgDuration }} d</div>
+         <div class="card-subtitle">Days to close (Completed)</div>
+      </div>
+    </div>
+
+    <!-- Charts Grid -->
+    <div class="chart-grid">
+      <div class="chart-card">
+         <h3>Trigger Area 触发区域分布</h3>
+         <div class="chart-container">
+            <canvas id="chart-area"></canvas>
+         </div>
+      </div>
+      <div class="chart-card">
+         <h3>Scope 范围分布比例</h3>
+         <div class="chart-container">
+            <canvas id="chart-scope"></canvas>
+         </div>
+      </div>
+    </div>
+
+    <!-- Recent Activity Table -->
+    <div class="table-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+         <h3>Recent Triggered QR (Last 10 Cases)</h3>
+         <a href="list.html" style="font-size: 0.875rem; color: var(--primary-color); text-decoration: none;">View All →</a>
+      </div>
+      <table>
+         <thead>
+            <tr>
+               <th>QR Number</th>
+               <th>Title</th>
+               <th>Status</th>
+               <th>Trigger Area</th>
+               <th>Trigger Date</th>
+               <th>Owner</th>
+            </tr>
+         </thead>
+         <tbody>
+            <tr v-for="item in recentCases" :key="item.qr_number">
+                <td><a :href="'detail.html?id=' + item.qr_number" style="color: var(--primary-color); text-decoration:none; font-weight:600;">#{{ item.qr_number }}</a></td>
+                <td>{{ item.title }}</td>
+                <td><div class="badge" :class="item.qr_status === 'Completed' ? 'badge-completed' : (item.qr_status === 'Ongoing' ? 'badge-ongoing' : 'badge-failed')">{{ item.qr_status }}</div></td>
+                <td>{{ item.trigger_area }}</td>
+                <td>{{ item.trigger_date }}</td>
+                <td>{{ item.qr_owner }}</td>
+            </tr>
+         </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

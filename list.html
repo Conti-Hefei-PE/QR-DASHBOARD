@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR List - Quick Response Management</title>
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Vue 3 from CDN -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+</head>
+<body id="app">
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <span>QR Management</span>
+    </div>
+    <div class="sidebar-nav">
+      <a href="index.html" class="nav-item">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        <span>Dashboard</span>
+      </a>
+      <a href="list.html" class="nav-item active">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        <span>QR List</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="content-header">
+      <h1 class="content-title">QR List 列表</h1>
+      <button class="btn btn-primary" @click="isModalOpen = true">+ Add QR Case</button>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-row">
+      <div class="filter-group search-input">
+        <label class="filter-label">Search</label>
+        <input type="text" v-model="filters.searchText" class="filter-input" placeholder="Search Title, Phenomenon, Action...">
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Status</label>
+        <select v-model="filters.status" class="filter-input">
+          <option value="">All Status</option>
+          <option value="Ongoing">Ongoing</option>
+          <option value="Completed">Completed</option>
+          <option value="Failed">Failed</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Trigger Area</label>
+        <select v-model="filters.area" class="filter-input">
+          <option value="">All Areas</option>
+          <option v-for="a in uniqueAreas" :key="a" :value="a">{{ a }}</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Scope</label>
+        <select v-model="filters.scope" class="filter-input">
+          <option value="">All Scopes</option>
+          <option v-for="s in uniqueScopes" :key="s" :value="s">{{ s }}</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Owner</label>
+        <select v-model="filters.owner" class="filter-input">
+          <option value="">All Owners</option>
+          <option v-for="o in uniqueOwners" :key="o" :value="o">{{ o }}</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-card">
+      <table>
+        <thead>
+          <tr>
+            <th @click="changeSort('qr_number')" style="cursor:pointer;">QR Number <span v-if="currentSortBy === 'qr_number'">{{ sortAsc ? '↑' : '↓' }}</span></th>
+            <th @click="changeSort('title')" style="cursor:pointer;">Title <span v-if="currentSortBy === 'title'">{{ sortAsc ? '↑' : '↓' }}</span></th>
+            <th @click="changeSort('qr_status')" style="cursor:pointer;">Status <span v-if="currentSortBy === 'qr_status'">{{ sortAsc ? '↑' : '↓' }}</span></th>
+            <th @click="changeSort('trigger_area')" style="cursor:pointer;">Trigger Area <span v-if="currentSortBy === 'trigger_area'">{{ sortAsc ? '↑' : '↓' }}</span></th>
+            <th @click="changeSort('scope')" style="cursor:pointer;">Scope <span v-if="currentSortBy === 'scope'">{{ sortAsc ? '↑' : '↓' }}</span></th>
+            <th @click="changeSort('trigger_date')" style="cursor:pointer;">Trigger Date <span v-if="currentSortBy === 'trigger_date'">{{ sortAsc ? '↑' : '↓' }}</span></th>
+            <th @click="changeSort('qr_owner')" style="cursor:pointer;">Owner <span v-if="currentSortBy === 'qr_owner'">{{ sortAsc ? '↑' : '↓' }}</span></th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-if="paginatedData.length === 0">
+             <td colspan="8" style="text-align:center;">No match found.</td>
+          </tr>
+          <tr v-for="item in paginatedData" :key="item.qr_number">
+             <td><a :href="'detail.html?id=' + item.qr_number" style="color: var(--primary-color); text-decoration:none; font-weight:600;">#{{ item.qr_number }}</a></td>
+             <td>{{ item.title }}</td>
+             <td><div class="badge" :class="item.qr_status === 'Completed' ? 'badge-completed' : (item.qr_status === 'Ongoing' ? 'badge-ongoing' : 'badge-failed')">{{ item.qr_status }}</div></td>
+             <td>{{ item.trigger_area }}</td>
+             <td>{{ item.scope }}</td>
+             <td>{{ item.trigger_date }}</td>
+             <td>{{ item.qr_owner }}</td>
+             <td><a :href="'display.html?id=' + item.qr_number" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; background: var(--warning-color); color: #212529; text-decoration:none; border-radius:4px; font-weight:600;">Display</a></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Pagination Control -->
+      <div class="pagination">
+        <div style="font-size: 0.875rem; color: var(--text-secondary);">
+          Showing {{ paginationStart }} to {{ paginationEnd }} of {{ filteredData.length }} entries
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+          <button class="btn" @click="prevPage" :disabled="currentPage === 1">Previous</button>
+          <button class="btn btn-primary" style="pointer-events:none;">{{ currentPage }}</button>
+          <button class="btn" @click="nextPage" :disabled="currentPage >= maxPage">Next</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Modal Overlay for Adding Case -->
+  <div class="modal-overlay" :class="{ active: isModalOpen }">
+    <div class="modal-form">
+       <h3 style="margin-bottom: 1rem;">Add New QR Case</h3>
+       <form @submit.prevent="submitNewCase">
+          <div class="form-group">
+             <label class="form-label">Title</label>
+             <input type="text" v-model="newCase.title" class="form-input" required placeholder="Description of issue">
+          </div>
+          <div class="form-group">
+             <label class="form-label">Trigger Area</label>
+             <input type="text" v-model="newCase.trigger_area" class="form-input" placeholder="e.g. CPTB, HP">
+          </div>
+          <div class="form-group">
+             <label class="form-label">Scope</label>
+             <input type="text" v-model="newCase.scope" class="form-input" placeholder="Sub-article, General">
+          </div>
+          <div class="form-group">
+             <label class="form-label">Trigger Date</label>
+             <input type="date" v-model="newCase.trigger_date" class="form-input" required>
+          </div>
+          <div class="form-group">
+             <label class="form-label">Owner</label>
+             <input type="text" v-model="newCase.qr_owner" class="form-input" placeholder="Name">
+          </div>
+          <div style="display: flex; gap: 0.5rem; margin-top: 1.5rem;">
+             <button type="submit" class="btn btn-primary">Submit</button>
+             <button type="button" class="btn" @click="isModalOpen = false">Cancel</button>
+          </div>
+       </form>
+    </div>
+  </div>
+
+  <script src="js/list.js"></script>
+</body>
+</html>

@@ -130,31 +130,63 @@
     <div class="modal-form">
        <h3 style="margin-bottom: 1rem;">Add New QR Case</h3>
        <form @submit.prevent="submitNewCase">
-          <div class="form-group">
-             <label class="form-label">Title</label>
-             <input type="text" v-model="newCase.title" class="form-input" required placeholder="Description of issue">
-          </div>
-          <div class="form-group">
-             <label class="form-label">Trigger Area</label>
-             <input type="text" v-model="newCase.trigger_area" class="form-input" placeholder="e.g. CPTB, HP">
-          </div>
-          <div class="form-group">
-             <label class="form-label">Scope</label>
-             <input type="text" v-model="newCase.scope" class="form-input" placeholder="Sub-article, General">
-          </div>
-          <div class="form-group">
-             <label class="form-label">Trigger Date</label>
-             <input type="date" v-model="newCase.trigger_date" class="form-input" required>
-          </div>
-          <div class="form-group">
-             <label class="form-label">Owner</label>
-             <input type="text" v-model="newCase.qr_owner" class="form-input" placeholder="Name">
-          </div>
-          <div style="display: flex; gap: 0.5rem; margin-top: 1.5rem;">
-             <button type="submit" class="btn btn-primary">Submit</button>
-             <button type="button" class="btn" @click="isModalOpen = false">Cancel</button>
-          </div>
-       </form>
+           <div class="form-group">
+              <label class="form-label">Title</label>
+              <input type="text" v-model="newCase.title" class="form-input" required placeholder="Description of issue">
+           </div>
+           
+           <div class="form-group">
+              <label class="form-label">Failure Code</label>
+              <input type="text" v-model="newCase.failure_code" class="form-input" placeholder="e.g. FC01">
+           </div>
+
+           <div class="form-group">
+              <label class="form-label">Scope</label>
+              <select v-model="newCase.scope" class="form-input" required>
+                 <option disabled value="">Select Scope</option>
+                 <option value="Article">Article</option>
+                 <option value="General">General</option>
+                 <option value="Compound">Compound</option>
+                 <option value="Management">Management</option>
+              </select>
+           </div>
+
+           <div class="form-group">
+              <label class="form-label">Trigger Area</label>
+              <select v-model="newCase.trigger_area" class="form-input" required>
+                 <option disabled value="">Select Area</option>
+                 <option value="Mix">Mix</option>
+                 <option value="HP">HP</option>
+                 <option value="CPTB">CPTB</option>
+                 <option value="CUFF">CUFF</option>
+                 <option value="Phase IV">Phase IV</option>
+              </select>
+           </div>
+
+           <div class="form-group">
+              <label class="form-label">Trigger Date</label>
+              <input type="date" v-model="newCase.trigger_date" class="form-input" required>
+           </div>
+
+           <div class="form-group">
+              <label class="form-label">Owner</label>
+              <input type="text" v-model="newCase.qr_owner" class="form-input" required placeholder="Name">
+           </div>
+
+           <div class="form-group">
+              <label class="form-label">Present Cannel</label>
+              <select v-model="newCase.present_cannel" class="form-input" required>
+                 <option disabled value="">Select Channel</option>
+                 <option value="BT2">BT2</option>
+                 <option value="BT3">BT3</option>
+              </select>
+           </div>
+
+           <div style="display: flex; gap: 0.5rem; margin-top: 1.5rem;">
+              <button type="submit" class="btn btn-primary">Submit</button>
+              <button type="button" class="btn" @click="isModalOpen = false">Cancel</button>
+           </div>
+        </form>
     </div>
   </div>
 

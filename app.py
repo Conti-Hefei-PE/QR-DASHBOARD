@@ -234,14 +234,16 @@ def add_case_api():
         trigger_area = data.get('trigger_area', '')
         scope = data.get('scope', '')
         qr_owner = data.get('qr_owner', '')
-        trigger_date = data.get('trigger_date') # expects 'YYYY-MM-DD'
+        trigger_date = data.get('trigger_date') 
         qr_status = data.get('qr_status', 'Ongoing')
+        failure_code = data.get('failure_code', '')
+        present_cannel = data.get('present_cannel', '')
 
         sql = """
-        INSERT INTO qr_cases (qr_number, title, qr_status, trigger_area, scope, trigger_date, qr_owner)
-        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        INSERT INTO qr_cases (qr_number, title, qr_status, trigger_area, scope, trigger_date, qr_owner, failure_code, present_cannel)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
-        cursor.execute(sql, (new_qr_number, title, qr_status, trigger_area, scope, trigger_date, qr_owner))
+        cursor.execute(sql, (new_qr_number, title, qr_status, trigger_area, scope, trigger_date, qr_owner, failure_code, present_cannel))
         conn.commit()
 
         return jsonify({"message": "Created successfully", "qr_number": new_qr_number}), 201

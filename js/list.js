@@ -14,8 +14,9 @@ createApp({
         const currentSortBy = ref('qr_number'); 
 
         // Modal for Adding Case
+        function getToday() { return new Date().toISOString().split('T')[0]; }
         const isModalOpen = ref(false);
-        const newCase = ref({ title: '', trigger_area: '', scope: '', trigger_date: '', qr_owner: '', qr_status: 'Ongoing' });
+        const newCase = ref({ title: '', failure_code: '', scope: '', trigger_area: '', trigger_date: getToday(), qr_owner: '', present_cannel: '', qr_status: 'Ongoing' });
 
         // Lightbox for Picture preview
         const lightbox = ref({ active: false, url: '' });
@@ -93,7 +94,7 @@ createApp({
                   if (data.message) {
                        alert('Case added successfully with QR Support ID: #' + data.qr_number);
                        isModalOpen.value = false;
-                       newCase.value = { title: '', trigger_area: '', scope: '', trigger_date: '', qr_owner: '', qr_status: 'Ongoing' };
+                       newCase.value = { title: '', failure_code: '', scope: '', trigger_area: '', trigger_date: getToday(), qr_owner: '', present_cannel: '', qr_status: 'Ongoing' };
                        loadData();
                   } else {
                        alert('Error: ' + JSON.stringify(data));

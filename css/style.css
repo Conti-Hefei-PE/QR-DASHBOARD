@@ -508,4 +508,7 @@ tr:hover {
   display: flex;
 }
 
-
+.upload-zone.drag-over {
+  border-color: var(--primary-color) !important;
+  background-color: #e9ecef !important;
+}

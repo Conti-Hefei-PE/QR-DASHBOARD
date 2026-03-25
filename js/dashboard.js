@@ -2,6 +2,9 @@ const { createApp, ref, onMounted } = Vue;
 
 createApp({
     setup() {
+        // Global i18n logic from i18n.js
+        const { currentLang, t, toggleLang } = getI18nMixin().setup();
+
         const updateTime = ref(new Date().toLocaleDateString());
         const kpis = ref({ total: 0, completed: 0, failed: 0, completedRate: '0', failedRate: '0', avgDuration: '0' });
         const recentCases = ref([]);
@@ -22,7 +25,7 @@ createApp({
 
         function renderCharts(areaDist, scopeDist) {
              renderDoughnutChart('chart-area', Object.keys(areaDist), Object.values(areaDist));
-             renderBarChart('chart-scope', Object.keys(scopeDist), Object.values(scopeDist), 'QR Counts');
+             renderBarChart('chart-scope', Object.keys(scopeDist), Object.values(scopeDist), t('qr_list'));
         }
 
         function renderDoughnutChart(id, labels, dataPoints) {
@@ -60,7 +63,8 @@ createApp({
         return {
             updateTime,
             kpis,
-            recentCases
+            recentCases,
+            currentLang, t, toggleLang
         };
     }
 }).mount('#app');

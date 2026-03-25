@@ -1,81 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{ t("qrList") }} # - Quick Response Management</title>
-  <link rel="stylesheet" href="css/style.css">
-  <!-- Vue 3 from CDN -->
-  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
-  <script src="js/i18n.js"></script>
-</head>
-<body id="app">
+import os
+import re
 
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <div class="sidebar-header">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-      <span>{{ t('qr_management') }}</span>
-    </div>
-    <div class="sidebar-nav">
-      <a href="index.html" class="nav-item">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-        <span>{{ t('dashboard') }}</span>
-      </a>
-      <a href="list.html" class="nav-item">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-        <span>{{ t('qr_list') }}</span>
-      </a>
-    </div>
-  </div>
+html_path = r"c:\Users\uie51305\OneDrive - Continental AG\Apps\AntiGravity\QR\detail.html"
 
-  <!-- Main Content -->
-  <div class="main-content">
-    <div class="content-header">
-      <a href="list.html" style="text-decoration:none; color: var(--primary-color); font-weight:600; font-size: 0.875rem; display: flex; align-items:center; gap: 0.25rem;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-        {{ t('back_to_list') }}
-      </a>
-      <div style="display: flex; gap: 0.5rem; align-items:center;">
-          <button class="btn btn-sm" @click="toggleLang" style="margin-right: 1rem;">{{ currentLang === "en" ? "中文" : "English" }}</button>
-          <h1 class="content-title" style="margin-right: 1rem;">{{ t('qr_detail') }} <span v-if="item">#{{ item.qr_number }}</span></h1>
-          
-          <button class="btn" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; margin-right: 1rem;" @click="toggleLanguage">
-              {{ currentLocale === 'en' ? '🇨🇳 中文' : '🇺🇸 EN' }}
-          </button>
+with open(html_path, 'r', encoding='utf-8') as f:
+    content = f.read()
 
-          <button v-if="item && item.qr_status === 'Ongoing'" class="btn" @click="toggleEdit">
-             {{ isEditMode ? t('cancel_edit') : t('edit') }}
-          </button>
-          <button v-if="isEditMode" class="btn btn-primary" @click="saveChanges">{{ t('save') }}</button>
-      </div>
-    </div>
+# 1. Update Edit button logic: Only show when item.qr_status === 'Ongoing'
+edit_btn_pattern = r'<button v-if="item" class="btn" @click="toggleEdit">[\s\S]*?</button>'
+new_edit_btn = """<button v-if="item && item.qr_status === 'Ongoing'" class="btn" @click="toggleEdit">
+             {{ isEditMode ? 'Cancel Edit' : 'Edit' }}
+          </button>"""
+content = re.sub(edit_btn_pattern, new_edit_btn, content)
 
-    <!-- Not Found -->
-    <div v-if="!item" id="not-found-msg" style="text-align:center; padding: 2rem; background:#fff; border-radius:8px;">
-       Case Not Found or Loading...
-    </div>
-
-    <!-- Detail Grid -->
-    <div v-if="item" id="detail-content" class="detail-grid">
-      <!-- Left Column: Details, Phenomenon, Measures -->
-      <div class="column">
-         <!-- Basic Info -->
+# 2. Reorder Basic Information
+basic_info_pattern = r'<!-- Basic Info -->[\s\S]*?<!-- Phenomenon -->'
+new_basic_info = """<!-- Basic Info -->
          <div class="detail-section">
-            <div class="detail-title">{{ t('basic_info') }}</div>
+            <div class="detail-title">Basic Information 基本信息</div>
             
             <div class="detail-row">
-               <span class="detail-label">{{ t('title') }}</span>
+               <span class="detail-label">Title</span>
                <div class="detail-value">
                   <input v-if="isEditMode" type="text" v-model="item.title" class="form-input">
                   <span v-else>{{ item.title }}</span>
                </div>
             </div>
             
-            <div class="detail-row"><span class="detail-label">{{ t('qr_number') }}</span><span class="detail-value">#{{ item.qr_number }}</span></div>
+            <div class="detail-row"><span class="detail-label">QR Number</span><span class="detail-value">#{{ item.qr_number }}</span></div>
             
             <div class="detail-row">
-               <span class="detail-label">{{ t('qr_status') }}</span>
+               <span class="detail-label">QR Status</span>
                <div class="detail-value">
                   <select v-if="isEditMode" v-model="item.qr_status" class="form-input">
                      <option value="Ongoing">Ongoing</option>
@@ -87,7 +42,7 @@
             </div>
 
             <div class="detail-row">
-               <span class="detail-label">{{ t('failure_code') }}</span>
+               <span class="detail-label">Failure Code</span>
                <div class="detail-value">
                   <input v-if="isEditMode" type="text" v-model="item.failure_code" class="form-input">
                   <span v-else>{{ item.failure_code || 'N/A' }}</span>
@@ -95,7 +50,7 @@
             </div>
 
             <div class="detail-row">
-               <span class="detail-label">{{ t('scope') }}</span>
+               <span class="detail-label">Scope</span>
                <div class="detail-value">
                   <select v-if="isEditMode" v-model="item.scope" class="form-input">
                      <option value="Article">Article</option>
@@ -108,7 +63,7 @@
             </div>
             
             <div class="detail-row">
-               <span class="detail-label">{{ t('trigger_area') }}</span>
+               <span class="detail-label">Trigger Area</span>
                <div class="detail-value">
                   <select v-if="isEditMode" v-model="item.trigger_area" class="form-input">
                      <option value="Mix">Mix</option>
@@ -122,7 +77,7 @@
             </div>
 
             <div class="detail-row">
-               <span class="detail-label">{{ t('trigger_date') }}</span>
+               <span class="detail-label">Trigger Date</span>
                <div class="detail-value">
                   <input v-if="isEditMode" type="date" v-model="item.trigger_date" class="form-input">
                   <span v-else>{{ item.trigger_date || 'N/A' }}</span>
@@ -130,7 +85,7 @@
             </div>
 
             <div class="detail-row">
-               <span class="detail-label">{{ t('qr_owner') }}</span>
+               <span class="detail-label">QR Owner</span>
                <div class="detail-value">
                   <input v-if="isEditMode" type="text" v-model="item.qr_owner" class="form-input">
                   <span v-else>{{ item.qr_owner || 'N/A' }}</span>
@@ -138,7 +93,7 @@
             </div>
             
             <div class="detail-row">
-               <span class="detail-label">{{ t('problem_severity') }}</span>
+               <span class="detail-label">Problem Severity</span>
                <div class="detail-value">
                   <input v-if="isEditMode" type="text" v-model="item.problem_severity" class="form-input">
                   <span v-else>{{ item.problem_severity || 'N/A' }}</span>
@@ -146,7 +101,7 @@
             </div>
 
             <div class="detail-row">
-               <span class="detail-label">{{ t('target') }}</span>
+               <span class="detail-label">Target</span>
                <div class="detail-value">
                   <input v-if="isEditMode" type="text" v-model="item.target" class="form-input">
                   <span v-else>{{ item.target || 'N/A' }}</span>
@@ -154,7 +109,7 @@
             </div>
 
             <div class="detail-row">
-               <span class="detail-label">{{ t('close_date') }}</span>
+               <span class="detail-label">Close Date</span>
                <div class="detail-value">
                   <input v-if="isEditMode" type="date" v-model="item.close_date" class="form-input">
                   <span v-else>{{ item.close_date || 'N/A' }}</span>
@@ -162,9 +117,14 @@
             </div>
          </div>
 
-         <!-- Phenomenon -->
+         <!-- Phenomenon -->"""
+content = re.sub(basic_info_pattern, new_basic_info, content)
+
+# 3. Phenomenon -> No textarea, drag/drop + image link only
+phenomenon_pattern = r'<!-- Phenomenon -->[\s\S]*?<!-- Measures -->'
+new_phenomenon = """<!-- Phenomenon -->
          <div class="detail-section">
-            <div class="detail-title">{{ t('phenomenon') }}</div>
+            <div class="detail-title">Problem Phenomenon 问题现象</div>
             
             <div v-if="isEditMode" 
                  @drop.prevent="handleDrop" 
@@ -176,7 +136,7 @@
                <input type="file" @change="uploadImage" style="display:none;" accept="image/*" id="phenomInput">
                <label for="phenomInput" style="cursor:pointer; display:block; width:100%; height:100%;">
                   <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--primary-color)" stroke-width="2" style="margin-bottom:0.5rem;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                  <p style="margin:0; color:#495057; font-weight:500;">{{ t('drag_drop_upload') }}</p>
+                  <p style="margin:0; color:#495057; font-weight:500;">Click or Drag & Drop image here to upload</p>
                </label>
             </div>
             
@@ -184,56 +144,63 @@
                <img :src="item.phenomenon_image" class="phenom-image" @click="openModal" alt="Phenomenon Evidence" style="max-width:100%; max-height:400px; border:1px solid #dee2e6; border-radius:4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); cursor: zoom-in;">
             </div>
             <div v-else-if="!isEditMode && !item.phenomenon_image" style="color: #6c757d; font-style: italic; padding: 1rem; background: #f8f9fa; border-radius: 4px;">
-               {{ t('no_picture') }}
+               No picture uploaded.
             </div>
          </div>
 
-         <!-- Measures -->
+         <!-- Measures -->"""
+content = re.sub(phenomenon_pattern, new_phenomenon, content)
+
+
+# 4. Measures (Good Lead & Evidence addition)
+measures_pattern = r'<!-- Measures -->[\s\S]*?</div>\s*</div>\s*<!-- Right Column: Timeline & EP Directions -->'
+new_measures = """<!-- Measures -->
          <div class="detail-section">
-            <div class="detail-title">{{ t('measures_result') }}</div>
+            <div class="detail-title">Measures & Result 措施与结果</div>
             <div class="detail-row" style="flex-direction:column; gap:0.25rem; margin-bottom: 1rem;">
-               <span class="detail-label" style="flex: none; margin-bottom: 0.25rem;">{{ t('action') }}</span>
+               <span class="detail-label" style="flex: none; margin-bottom: 0.25rem;">Action 措施</span>
                <textarea v-if="isEditMode" v-model="item.action" class="form-input" style="height: 120px;"></textarea>
                <div v-else class="detail-value" style="white-space: pre-line; background: #f8f9fa; padding: 0.75rem; border-radius: 4px;">{{ item.action || 'N/A' }}</div>
             </div>
             <div class="detail-row" style="flex-direction:column; gap:0.25rem; margin-bottom: 1rem;">
-               <span class="detail-label" style="flex: none; margin-bottom: 0.25rem;">{{ t('result') }}</span>
+               <span class="detail-label" style="flex: none; margin-bottom: 0.25rem;">Result 结果</span>
                <textarea v-if="isEditMode" v-model="item.result" class="form-input" style="height: 120px;"></textarea>
                <div v-else class="detail-value" style="white-space: pre-line; background: #f8f9fa; padding: 0.75rem; border-radius: 4px;">{{ item.result || 'N/A' }}</div>
             </div>
 
             <!-- Newly requested sections -->
             <div class="detail-row" style="flex-direction:column; gap:0.25rem; margin-bottom: 1rem;">
-               <span class="detail-label" style="flex: none; margin-bottom: 0.25rem;">{{ t('good_lead') }}</span>
+               <span class="detail-label" style="flex: none; margin-bottom: 0.25rem;">Good Lead</span>
                <textarea v-if="isEditMode" v-model="item.good_lead" class="form-input" style="height: 120px;"></textarea>
                <div v-else class="detail-value" style="white-space: pre-line; background: #f8f9fa; padding: 0.75rem; border-radius: 4px;">{{ item.good_lead || 'N/A' }}</div>
             </div>
             <div class="detail-row" style="flex-direction:column; gap:0.25rem; margin-bottom: 1rem;">
-               <span class="detail-label" style="flex: none; margin-bottom: 0.25rem;">{{ t('evidence') }}</span>
+               <span class="detail-label" style="flex: none; margin-bottom: 0.25rem;">Evidence</span>
                <textarea v-if="isEditMode" v-model="item.evidence" class="form-input" style="height: 120px;"></textarea>
                <div v-else class="detail-value" style="white-space: pre-line; background: #f8f9fa; padding: 0.75rem; border-radius: 4px;">{{ item.evidence || 'N/A' }}</div>
             </div>
 
             <div class="detail-row" style="flex-direction:column; gap:0.25rem;">
-               <span class="detail-label" style="flex: none; margin-bottom: 0.25rem;">{{ t('conclusion') }}</span>
+               <span class="detail-label" style="flex: none; margin-bottom: 0.25rem;">Conclusion 结论</span>
                <textarea v-if="isEditMode" v-model="item.conclusion" class="form-input" style="height: 120px;"></textarea>
                <div v-else class="detail-value" style="white-space: pre-line; background: #f8f9fa; padding: 0.75rem; border-radius: 4px;">{{ item.conclusion || 'N/A' }}</div>
             </div>
          </div>
       </div>
 
-      <!-- Right Column: Timeline & EP Directions -->
-      <div class="column">
-         <!-- Next Step Matrix -->
-         <div class="detail-section">
-            <div class="detail-title">{{ t('next_step') }}</div>
-            
-            
+      <!-- Right Column: Timeline & EP Directions -->"""
+content = re.sub(measures_pattern, new_measures, content)
 
-         
-               </div>
+# 5. Right column EP directions mapping -> Next Step Matrix editor
+ep_pattern = r'<!-- EP Directions -->[\s\S]*?</div>\s*</div>\s*<!-- Lightbox Modal -->'
+new_ep = """<!-- Next Step Matrix (Formerly EP Directions) -->
+         <div class="detail-section">
+            <div class="detail-title">Next Step 次步计划</div>
+            
+            <div class="detail-row" style="flex-direction:column; gap:0.25rem; margin-bottom: 1.5rem;">
+               <textarea v-if="isEditMode" v-model="item.next_step" class="form-input" style="height: 80px;" placeholder="Overall Next Step Description..."></textarea>
+               <div v-else class="detail-value" style="white-space: pre-line; background: #e9ecef; border-left: 4px solid var(--primary-color); padding: 0.75rem; border-radius: 4px;">{{ item.next_step || 'No overall next step defined.' }}</div>
             </div>
-         </div>
 
             <div class="tabs-container" style="border: 1px solid #dee2e6; border-radius: 8px; overflow: hidden;">
                <div class="tabs-header" style="background: #f8f9fa; border-bottom: 1px solid #dee2e6;">
@@ -245,7 +212,7 @@
                <div v-for="n in [1,2,3]" :key="'content-'+n" class="tab-content" :class="{ active: selectedTab === n }" style="padding: 1rem; background: #fff;">
                   
                   <div style="margin-bottom: 1rem;">
-                     <label class="detail-label" style="display:block; margin-bottom: 0.25rem;">{{ t('dir_label') }} {{ n }}</label>
+                     <label class="detail-label" style="display:block; margin-bottom: 0.25rem;">Direction {{ n }} Statement</label>
                      <textarea v-if="isEditMode" v-model="item['ep_direction_' + n]" class="form-input" style="height: 60px;"></textarea>
                      <div v-else class="detail-value" style="background:#f1f3f5; padding:0.5rem; border-radius:4px; min-height:40px;">{{ item['ep_direction_' + n] || 'N/A' }}</div>
                   </div>
@@ -279,14 +246,9 @@
       </div>
     </div>
 
-    <!-- Lightbox Modal -->
-    <div class="modal" :class="{ active: isModalActive }" @click="isModalActive = false">
-       <img class="modal-content" :src="item?.phenomenon_image">
-    </div>
+    <!-- Lightbox Modal -->"""
+content = re.sub(ep_pattern, new_ep, content)
 
-  </div>
-
-  <script src="js/i18n.js"></script>
-  <script src="js/detail.js"></script>
-</body>
-</html>
+with open(html_path, 'w', encoding='utf-8') as f:
+    f.write(content)
+print("detail.html rewritten successfully.")

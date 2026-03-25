@@ -2,6 +2,8 @@ const { createApp, ref, computed, watch, onMounted } = Vue;
 
 createApp({
     setup() {
+        const { currentLang, t, toggleLang } = getI18nMixin().setup();
+
         const fullData = ref([]);
         const uniqueAreas = ref([]);
         const uniqueScopes = ref([]);
@@ -113,6 +115,7 @@ createApp({
             uniqueAreas, uniqueScopes, uniqueOwners,
             paginatedData, maxPage, paginationStart, paginationEnd,
             prevPage, nextPage, changeSort,
+            currentLang, t, toggleLang,
             isModalOpen, newCase, submitNewCase,
             lightbox, openLightbox
         };

@@ -259,9 +259,9 @@ tr:hover {
 
 .detail-section {
   background: var(--card-bg);
-  padding: 1.5rem;
+  padding: 1rem;
   border-radius: 8px;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
@@ -275,13 +275,22 @@ tr:hover {
 
 .detail-row {
   display: flex;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
 }
 
 .detail-label {
-  flex: 0 0 150px;
+  flex: 0 0 160px;
   font-weight: 600;
   color: var(--text-secondary);
+}
+
+.detail-row.vertical {
+  flex-direction: column;
+}
+
+.detail-row.vertical .detail-label {
+  flex: none;
+  margin-bottom: 0.2rem;
 }
 
 .detail-value {
@@ -465,11 +474,11 @@ tr:hover {
 
 .tab-content {
   display: none;
-  padding: 1rem 0;
+  padding: 0.75rem 0;
 }
 
 .tab-content.active {
-  display: block;
+  display: block !important;
 }
 
 /* Phenomenon Image */

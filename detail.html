@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="css/style.css">
   <!-- Vue 3 from CDN -->
   <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
-  <script src="js/i18n.js"></script>
+  <script src="js/i18n.js?v=1.2"></script>
 </head>
 <body id="app">
 
@@ -181,30 +181,30 @@
          <!-- Measures & Result -->
          <div class="detail-section">
             <div class="detail-title">{{ t('measuresResult') }}</div>
-            <div class="detail-row" style="flex-direction:column; margin-bottom: 1rem;">
+            <div class="detail-row vertical">
                <span class="detail-label">{{ t('action') }}</span>
                <textarea v-if="isEditMode" v-model="item.action" class="form-input" style="height: 100px;"></textarea>
-               <div v-else class="detail-value" style="white-space: pre-line; background: #f8f9fa; padding: 0.75rem;">{{ item.action || 'N/A' }}</div>
+               <div v-else class="detail-value" style="white-space: pre-line; background: #f8f9fa; padding: 0.75rem; border-radius: 4px;">{{ item.action || 'N/A' }}</div>
             </div>
-            <div class="detail-row" style="flex-direction:column; margin-bottom: 1rem;">
+            <div class="detail-row vertical">
                <span class="detail-label">{{ t('result') }}</span>
                <textarea v-if="isEditMode" v-model="item.result" class="form-input" style="height: 100px;"></textarea>
-               <div v-else class="detail-value" style="white-space: pre-line; background: #f8f9fa; padding: 0.75rem;">{{ item.result || 'N/A' }}</div>
+               <div v-else class="detail-value" style="white-space: pre-line; background: #f8f9fa; padding: 0.75rem; border-radius: 4px;">{{ item.result || 'N/A' }}</div>
             </div>
-            <div class="detail-row" style="flex-direction:column; margin-bottom: 1rem;">
+            <div class="detail-row vertical">
                <span class="detail-label">{{ t('goodLead') }}</span>
                <textarea v-if="isEditMode" v-model="item.good_lead" class="form-input" style="height: 100px;"></textarea>
-               <div v-else class="detail-value" style="white-space: pre-line; background: #f8f9fa; padding: 0.75rem;">{{ item.good_lead || 'N/A' }}</div>
+               <div v-else class="detail-value" style="white-space: pre-line; background: #f8f9fa; padding: 0.75rem; border-radius: 4px;">{{ item.good_lead || 'N/A' }}</div>
             </div>
-            <div class="detail-row" style="flex-direction:column;">
+            <div class="detail-row vertical">
                <span class="detail-label">{{ t('evidence') }}</span>
                <textarea v-if="isEditMode" v-model="item.evidence" class="form-input" style="height: 100px;"></textarea>
-               <div v-else class="detail-value" style="white-space: pre-line; background: #f8f9fa; padding: 0.75rem;">{{ item.evidence || 'N/A' }}</div>
+               <div v-else class="detail-value" style="white-space: pre-line; background: #f8f9fa; padding: 0.75rem; border-radius: 4px;">{{ item.evidence || 'N/A' }}</div>
             </div>
-            <div class="detail-row" style="flex-direction:column; margin-top: 1rem;">
+            <div class="detail-row vertical">
                <span class="detail-label">{{ t('conclusion') }}</span>
                <textarea v-if="isEditMode" v-model="item.conclusion" class="form-input" style="height: 100px;"></textarea>
-               <div v-else class="detail-value" style="white-space: pre-line; background: #f8f9fa; padding: 0.75rem;">{{ item.conclusion || 'N/A' }}</div>
+               <div v-else class="detail-value" style="white-space: pre-line; background: #f8f9fa; padding: 0.75rem; border-radius: 4px;">{{ item.conclusion || 'N/A' }}</div>
             </div>
          </div>
       </div>
@@ -222,37 +222,37 @@
                   </button>
                </div>
                
-               <div v-for="n in [1,2,3]" :key="'content-'+n" class="tab-content" v-show="selectedTab === n" style="padding: 1rem; background: #fff;">
-                  <div style="margin-bottom: 1rem;">
-                     <label class="detail-label" style="display:block;">Direction {{ n }} Description</label>
+               <div v-for="n in [1,2,3]" :key="'content-'+n" class="tab-content" :class="{ active: selectedTab === n }" style="padding: 0.75rem; background: #fff;">
+                  <div class="detail-row vertical">
+                     <label class="detail-label">{{ t('directionDescription') }} {{ n }}</label>
                      <textarea v-if="isEditMode" v-model="item['ep_direction_' + n]" class="form-input" style="height: 60px; width:100%;"></textarea>
-                     <div v-else class="detail-value" style="background:#f1f3f5; padding:0.5rem; min-height:40px;">{{ item['ep_direction_' + n] || 'N/A' }}</div>
+                     <div v-else class="detail-value" style="background:#f8f9fa; padding:0.5rem; border-radius:4px; min-height:40px; border: 1px solid #eee;">{{ item['ep_direction_' + n] || 'N/A' }}</div>
                   </div>
 
-                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 0.5rem;">
                      <div v-for="field in ['reliability','cost','applicability','races']" :key="field">
-                        <label class="detail-label" style="text-transform: capitalize;">{{ field }}</label>
-                        <select v-if="isEditMode" v-model="item['ep' + n + '_' + field]" class="form-input">
+                        <label class="detail-label" style="font-size: 0.75rem;">{{ t(field) }}</label>
+                        <select v-if="isEditMode" v-model="item['ep' + n + '_' + field]" class="form-input" style="padding: 0.25rem;">
                            <option value="High">High</option><option value="Medium">Medium</option><option value="Low">Low</option>
                         </select>
-                        <div v-else class="detail-value">{{ item['ep' + n + '_' + field] || 'N/A' }}</div>
+                        <div v-else class="detail-value" style="font-size: 0.85rem; font-weight: bold; color: var(--primary-color);">{{ item['ep' + n + '_' + field] || 'N/A' }}</div>
                      </div>
                   </div>
                </div>
             </div>
 
-            <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #dee2e6;">
-                <div class="detail-row" style="margin-bottom: 1rem;">
-                    <span class="detail-label">{{ t('nextStepExecutor') }}</span>
+            <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid #dee2e6;">
+                <div class="detail-row vertical">
+                    <span class="detail-label">{{ t('nextStepDetailedDescription') }}</span>
+                    <textarea v-if="isEditMode" v-model="item.next_step" class="form-input" style="height: 80px; width:100%;"></textarea>
+                    <div v-else class="detail-value" style="background:#f8f9fa; padding:0.75rem; border-radius:4px; min-height:60px; white-space:pre-line;">{{ item.next_step || 'N/A' }}</div>
+                </div>
+                <div class="detail-row" style="margin-top: 0.5rem;">
+                    <span class="detail-label" style="flex: 0 0 160px;">{{ t('nextStepExecutor') }}</span>
                     <div class="detail-value">
                         <input v-if="isEditMode" type="text" v-model="item.next_step_executor" class="form-input" style="width: 100%;">
-                        <span v-else>{{ item.next_step_executor || 'N/A' }}</span>
+                        <span v-else style="font-weight: bold;">{{ item.next_step_executor || 'N/A' }}</span>
                     </div>
-                </div>
-                <div class="detail-row" style="flex-direction:column;">
-                    <span class="detail-label">{{ t('nextStep') }} Description</span>
-                    <textarea v-if="isEditMode" v-model="item.next_step" class="form-input" style="height: 100px; width:100%;"></textarea>
-                    <div v-else class="detail-value" style="background:#f8f9fa; padding:0.75rem; min-height:80px; white-space:pre-line;">{{ item.next_step || 'N/A' }}</div>
                 </div>
             </div>
          </div>
@@ -281,6 +281,6 @@
      <img v-if="item" class="modal-content" :src="item.phenomenon_image">
   </div>
 
-  <script src="js/detail.js"></script>
+  <script src="js/detail.js?v=1.2"></script>
 </body>
 </html>

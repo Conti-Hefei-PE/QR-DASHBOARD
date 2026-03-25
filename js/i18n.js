@@ -52,7 +52,13 @@ const i18nData = {
         to: "to",
         of: "of",
         entries: "entries",
-        caseTriggered: "QR Case Triggered"
+        caseTriggered: "QR Case Triggered",
+        directionDescription: "EP Direction Content",
+        reliability: "Reliability",
+        cost: "Cost",
+        applicability: "Applicability",
+        races: "RACES",
+        nextStepDetailedDescription: "Next Step Detailed Description"
     },
     zh: {
         dashboard: "仪表盘",
@@ -107,7 +113,13 @@ const i18nData = {
         to: "至",
         of: "共",
         entries: "条记录",
-        caseTriggered: "QR 案例触发"
+        caseTriggered: "QR 案例触发",
+        directionDescription: "下一步计划内容",
+        reliability: "可靠性",
+        cost: "成本",
+        applicability: "适用性",
+        races: "RACES (评分)",
+        nextStepDetailedDescription: "下一步计划详细描述"
     }
 };
 

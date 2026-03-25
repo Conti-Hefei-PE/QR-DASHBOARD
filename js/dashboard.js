@@ -25,7 +25,7 @@ createApp({
 
         function renderCharts(areaDist, scopeDist) {
              renderDoughnutChart('chart-area', Object.keys(areaDist), Object.values(areaDist));
-             renderBarChart('chart-scope', Object.keys(scopeDist), Object.values(scopeDist), t('qr_list'));
+             renderBarChart('chart-scope', Object.keys(scopeDist), Object.values(scopeDist), t('qrList'));
         }
 
         function renderDoughnutChart(id, labels, dataPoints) {

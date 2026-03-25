@@ -42,7 +42,7 @@
     <div class="filter-row">
       <div class="filter-group search-input">
         <label class="filter-label">Search</label>
-        <input type="text" v-model="filters.searchText" class="filter-input" placeholder="{{ t('searchPlaceholder') }}">
+        <input type="text" v-model="filters.searchText" class="filter-input" :placeholder="t('searchPlaceholder')">
       </div>
       <div class="filter-group">
         <label class="filter-label">Status</label>
@@ -64,14 +64,14 @@
         <label class="filter-label">{{ t('scope') }}</label>
         <select v-model="filters.scope" class="filter-input">
           <option value="">{{ t('allScopes') }}</option>
-          <option v-for="s in unique{{ t('scope') }}s" :key="s" :value="s">{{ s }}</option>
+          <option v-for="s in uniqueScopes" :key="s" :value="s">{{ s }}</option>
         </select>
       </div>
       <div class="filter-group">
         <label class="filter-label">{{ t('owner') }}</label>
         <select v-model="filters.owner" class="filter-input">
           <option value="">{{ t('allOwners') }}</option>
-          <option v-for="o in unique{{ t('owner') }}s" :key="o" :value="o">{{ o }}</option>
+          <option v-for="o in uniqueOwners" :key="o" :value="o">{{ o }}</option>
         </select>
       </div>
     </div>
@@ -91,7 +91,7 @@
         </thead>
         <tbody>
           <tr v-if="paginatedData.length === 0">
-             <td colspan="6" style="text-align:center;">No match found.</td>
+             <td colspan="6" style="text-align:center;">{{ t('noMatch') }}</td>
           </tr>
           <tr v-for="item in paginatedData" :key="item.qr_number">
              <td><a :href="'detail.html?id=' + item.qr_number" style="color: var(--primary-color); text-decoration:none; font-weight:600;">#{{ item.qr_number }}</a></td>

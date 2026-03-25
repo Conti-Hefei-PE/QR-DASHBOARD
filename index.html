@@ -106,7 +106,7 @@
             <tr v-for="item in recentCases" :key="item.qr_number">
                 <td><a :href="'detail.html?id=' + item.qr_number" style="color: var(--primary-color); text-decoration:none; font-weight:600;">#{{ item.qr_number }}</a></td>
                 <td>{{ item.title }}</td>
-                <td><div class="badge" :class="item.qr_status === '{{ t("completed") }}' ? 'badge-completed' : (item.qr_status === '{{ t("ongoing") }}' ? 'badge-ongoing' : 'badge-failed')">{{ item.qr_status }}</div></td>
+                <td><div class="badge" :class="item.qr_status === 'Completed' ? 'badge-completed' : (item.qr_status === 'Ongoing' ? 'badge-ongoing' : 'badge-failed')">{{ item.qr_status }}</div></td>
                 <td>{{ item.trigger_area }}</td>
                 <td>{{ item.trigger_date }}</td>
                 <td>{{ item.qr_owner }}</td>

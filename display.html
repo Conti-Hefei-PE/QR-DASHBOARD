@@ -163,15 +163,10 @@
           <div class="card-header">{{ t('result') }}</div>
           <div class="card-body">{{ item.result || 'N/A' }}</div>
         </div>
-        <div class="card">
+        <div class="card" v-if="item.phenomenon_image">
           <div class="card-header">Picture</div>
           <div class="picture-box" @click="openModal">
-            <template v-if="item.phenomenon_image">
-                <img :src="item.phenomenon_image" alt="Picture">
-            </template>
-            <template v-else>
-                Click Here To See The Picture
-            </template>
+             <img :src="item.phenomenon_image" alt="Picture">
           </div>
         </div>
       </div>
